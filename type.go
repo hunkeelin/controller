@@ -4,7 +4,6 @@ import (
 	"sync"
 	"time"
 )
-
 type Conn struct {
 	Cb     []byte
 	Kb     []byte

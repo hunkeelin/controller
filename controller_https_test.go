@@ -86,20 +86,20 @@ func TestDelHost(t *testing.T) {
 	}
     // shutdown host
     todelete := "ctest1"
-    p, err := c.Getvms(m["sf_deploy"].Govirt)
+    p, err := c.getvms(m["sf_deploy"].Govirt)
     if err != nil {
         panic(err)
     }
-    for _, hostsd := range p {
-        for _, i := range hostsd.Domains {
+    for parent, hosts := range p.Listvms {
+        for _,i := range hosts {
             if i.Domain.Name == todelete {
                 if i.State == "running" {
-                    err = c.Statevm("destroy",todelete,hostsd.Parent)
+                    err = c.Statevm("destroy",todelete,parent)
                     if err != nil {
                         panic(err)
                     }
                 }
-                err = c.Statevm("undefine",todelete,hostsd.Parent)
+                err = c.Statevm("undefine",todelete,parent)
                 if err != nil {
                     panic(err)
                 }
@@ -182,10 +182,10 @@ func TestCreateVm(t *testing.T){
         panic(err)
     }
     h := govirtlib.CreateVmForm {
-        Hostname: "utest2",
+        Hostname: "utest4",
         VmMac: string(macaddr),
         Uuid: string(uuid),
-        VmIp: "10.180.250.62",
+        VmIp: "10.180.250.64",
         CpuCount: 2,
         MemoryCount: 4,
         Image: "ubuntu",
@@ -266,7 +266,7 @@ func TestDefinevm(t *testing.T) {
 		panic(err)
 	}
 	rand.Seed(time.Now().UTC().UnixNano())
-	randhostint := randInt(0, len(m["sf_deploy"].Govirt))
+	randhostint := klinutils.RandInt(0, len(m["sf_deploy"].Govirt))
 	err = c.Define(template, m["sf_deploy"].Govirt[randhostint])
 	if err != nil {
 		panic(err)
@@ -313,16 +313,17 @@ func TestGetvm(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	p, err := c.Getvms(m["sf_deploy"].Govirt)
-	if err != nil {
-		panic(err)
-	}
-	for _, hostsd := range p {
-		fmt.Println("ParentHost:", hostsd.Parent)
-		for _, i := range hostsd.Domains {
-			fmt.Printf("\t%s\t%s%s\n", i.Domain.Name, "----> ", i.State)
-		}
-	}
+    pp, err := c.getvms(m["sf_deploy"].Govirt)
+    if err != nil {
+        panic(err)
+    }
+    for parent, hosts := range pp.Listvms {
+        fmt.Println("ParentHost:", parent)
+        for _, i := range hosts {
+            fmt.Printf("\t%s\t%s%s\n", i.Domain.Name, "----> ", i.State)
+        }
+    }
+
 }
 func TestStatevm(t *testing.T) {
 	fmt.Println("testing start vm with https")

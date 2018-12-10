@@ -15,7 +15,7 @@ func (c *Conn) Migratehost(ori, dest, vm string) error {
 	if err != nil {
 		return err
 	}
-	xml, err := c.Getxml(vm, ori)
+	xml, err := c.getxml(vm, ori)
 	if err != nil {
 		return err
 	}
@@ -79,7 +79,7 @@ func (c *Conn) CreateNewVm(v govirtlib.PostPayload) error {
 	xml = bytes.Replace(xml, []byte("mac_replace"), []byte(v.VmForm.VmMac), -1)
 	xml = bytes.Replace(xml, []byte("vlan_replace"), []byte(v.VmForm.Vlan), -1)
 	rand.Seed(time.Now().UTC().UnixNano())
-	randhostint := randInt(0, len(m[v.Cluster].Govirt))
+	randhostint := klinutils.RandInt(0, len(m[v.Cluster].Govirt))
 	err = c.Define(xml, m[v.Cluster].Govirt[randhostint])
 	if err != nil {
 		panic(err)
