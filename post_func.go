@@ -3,10 +3,10 @@ package controller
 import (
 	"bytes"
 	"errors"
-    "net/http"
 	"github.com/hunkeelin/govirt/govirtlib"
 	"github.com/hunkeelin/klinutils"
 	"math/rand"
+	"net/http"
 	"strconv"
 	"time"
 )
@@ -59,15 +59,11 @@ func (c *Conn) createvm(w http.ResponseWriter, v govirtlib.PostPayload) error {
 	if c.Ixml[v.VmForm.Image] == nil {
 		return errors.New("No image for : " + v.VmForm.Image)
 	}
-	m, err := Parse("config")
+	err = c.edithost(c.Clusters[v.Cluster].Godhcp, v, false)
 	if err != nil {
 		panic(err)
 	}
-	err = c.edithost(m[v.Cluster].Godhcp, v, false)
-	if err != nil {
-		panic(err)
-	}
-	err = c.setimage(m[v.Cluster].Storage, v.VmForm.Image, v.VmForm.Hostname)
+	err = c.setimage(c.Clusters[v.Cluster].Storage, v.VmForm.Image, v.VmForm.Hostname)
 	if err != nil {
 		panic(err)
 	}
@@ -80,12 +76,12 @@ func (c *Conn) createvm(w http.ResponseWriter, v govirtlib.PostPayload) error {
 	xml = bytes.Replace(xml, []byte("mac_replace"), []byte(v.VmForm.VmMac), -1)
 	xml = bytes.Replace(xml, []byte("vlan_replace"), []byte(v.VmForm.Vlan), -1)
 	rand.Seed(time.Now().UTC().UnixNano())
-	randhostint := klinutils.RandInt(0, len(m[v.Cluster].Govirt))
-	err = c.Define(xml, m[v.Cluster].Govirt[randhostint])
+	randhostint := klinutils.RandInt(0, len(c.Clusters[v.Cluster].Govirt))
+	err = c.Define(xml, c.Clusters[v.Cluster].Govirt[randhostint])
 	if err != nil {
 		panic(err)
 	}
-	err = c.Statevm("start", v.VmForm.Hostname, m[v.Cluster].Govirt[randhostint])
+	err = c.Statevm("start", v.VmForm.Hostname, c.Clusters[v.Cluster].Govirt[randhostint])
 	if err != nil {
 		panic(err)
 	}
