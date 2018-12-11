@@ -4,6 +4,12 @@ import (
 	"sync"
 	"time"
 )
+type authData struct {
+    User string `json:"user"`
+    Password string `json:"password"`
+    ValidGroups []string `json:"validgroups"`
+    ValidUsers []string `json:"validusers"`
+}
 type ClusterInfo struct {
     ClusterName string
     Godhcp      string
@@ -11,9 +17,9 @@ type ClusterInfo struct {
     Storage     string
 }
 type Conn struct {
-	Cb     []byte
-	Kb     []byte
-	Tb     []byte
+	cb     []byte
+	kb     []byte
+	tb     []byte
 	postMu sync.Mutex
 	authcb []byte
 	authkb []byte
@@ -21,6 +27,12 @@ type Conn struct {
 	Ixml   map[string][]byte
 	rmap   map[string]rlimit
     Clusters map[string]ClusterInfo
+    userlimit map[string]resourcelimit
+}
+type resourcelimit struct {
+    vcpu int
+    vram int
+    active bool
 }
 type rlimit struct {
 	cpu       int       // vcpu

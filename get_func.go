@@ -21,9 +21,9 @@ func (c *Conn) getxml(vm, host string) ([]byte, error) {
 		Dport:      klinutils.Stringtoport("govirthost"),
 		Method:     "GET",
 		Payload:    p,
-		TrustBytes: c.Tb,
-		CertBytes:  c.Cb,
-		KeyBytes:   c.Kb,
+		TrustBytes: c.tb,
+		CertBytes:  c.cb,
+		KeyBytes:   c.kb,
 	}
 	resp, err := klinreq.SendPayload(i)
 	if err != nil {
@@ -57,9 +57,9 @@ func (c *Conn) getvms(hosts []string) (govirtlib.ReturnPayload, error) {
 			Dport:      klinutils.Stringtoport("govirthost"),
 			Method:     "GET",
 			Payload:    p,
-			TrustBytes: c.Tb,
-			CertBytes:  c.Cb,
-			KeyBytes:   c.Kb,
+			TrustBytes: c.tb,
+			CertBytes:  c.cb,
+			KeyBytes:   c.kb,
 		}
 		resp, err := klinreq.SendPayload(i)
 		if err != nil {
@@ -93,9 +93,9 @@ func (c *Conn) getnetapi(w http.ResponseWriter, nethost string) error {
         Dport:   klinutils.Stringtoport("godhcp"),
         Method:  "GET",
         Payload: payload,
-        TrustBytes: c.Tb,
-        CertBytes:  c.Cb,
-        KeyBytes:   c.Kb,
+        TrustBytes: c.tb,
+        CertBytes:  c.cb,
+        KeyBytes:   c.kb,
     }
     resp, err := klinreq.SendPayload(i)
     if err != nil {
@@ -134,9 +134,9 @@ func (c *Conn) getvmsapi(w http.ResponseWriter, hosts []string) error {
 			Dport:      klinutils.Stringtoport("govirthost"),
 			Method:     "GET",
 			Payload:    p,
-			TrustBytes: c.Tb,
-			CertBytes:  c.Cb,
-			KeyBytes:   c.Kb,
+			TrustBytes: c.tb,
+			CertBytes:  c.cb,
+			KeyBytes:   c.kb,
 		}
 		resp, err := klinreq.SendPayload(i)
 		if err != nil {

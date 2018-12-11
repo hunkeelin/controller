@@ -15,15 +15,15 @@ func TestDup(t *testing.T) {
 	fmt.Println("testing dup")
 	var err error
 	c := Conn{}
-	c.Cb, err = ioutil.ReadFile("cert")
+	c.cb, err = ioutil.ReadFile("cert")
 	if err != nil {
 		panic(err)
 	}
-	c.Kb, err = ioutil.ReadFile("key")
+	c.kb, err = ioutil.ReadFile("key")
 	if err != nil {
 		panic(err)
 	}
-	c.Tb, err = ioutil.ReadFile("govirt.crt")
+	c.tb, err = ioutil.ReadFile("govirt.crt")
 	if err != nil {
 		panic(err)
 	}
@@ -43,15 +43,15 @@ func TestDelstrg(t *testing.T){
 	fmt.Println("testing delete storage host")
 	var err error
 	c := Conn{}
-	c.Cb, err = ioutil.ReadFile("cert")
+	c.cb, err = ioutil.ReadFile("cert")
 	if err != nil {
 		panic(err)
 	}
-	c.Kb, err = ioutil.ReadFile("key")
+	c.kb, err = ioutil.ReadFile("key")
 	if err != nil {
 		panic(err)
 	}
-	c.Tb, err = ioutil.ReadFile("govirt.crt")
+	c.tb, err = ioutil.ReadFile("govirt.crt")
 	if err != nil {
 		panic(err)
     }
@@ -68,15 +68,15 @@ func TestDelHost(t *testing.T) {
 	fmt.Println("testing delete host")
 	var err error
 	c := Conn{}
-	c.Cb, err = ioutil.ReadFile("cert")
+	c.cb, err = ioutil.ReadFile("cert")
 	if err != nil {
 		panic(err)
 	}
-	c.Kb, err = ioutil.ReadFile("key")
+	c.kb, err = ioutil.ReadFile("key")
 	if err != nil {
 		panic(err)
 	}
-	c.Tb, err = ioutil.ReadFile("govirt.crt")
+	c.tb, err = ioutil.ReadFile("govirt.crt")
 	if err != nil {
 		panic(err)
 	}
@@ -119,15 +119,15 @@ func TestEditHost(t *testing.T) {
 	fmt.Println("testing patch host")
 	var err error
 	c := Conn{}
-	c.Cb, err = ioutil.ReadFile("cert")
+	c.cb, err = ioutil.ReadFile("cert")
 	if err != nil {
 		panic(err)
 	}
-	c.Kb, err = ioutil.ReadFile("key")
+	c.kb, err = ioutil.ReadFile("key")
 	if err != nil {
 		panic(err)
 	}
-	c.Tb, err = ioutil.ReadFile("govirt.crt")
+	c.tb, err = ioutil.ReadFile("govirt.crt")
 	if err != nil {
 		panic(err)
 	}
@@ -154,15 +154,15 @@ func TestCreateVm(t *testing.T){
 	fmt.Println("testing createvm")
 	var err error
 	c := Conn{}
-	c.Cb, err = ioutil.ReadFile("cert")
+	c.cb, err = ioutil.ReadFile("cert")
 	if err != nil {
 		panic(err)
 	}
-	c.Kb, err = ioutil.ReadFile("key")
+	c.kb, err = ioutil.ReadFile("key")
 	if err != nil {
 		panic(err)
 	}
-	c.Tb, err = ioutil.ReadFile("govirt.crt")
+	c.tb, err = ioutil.ReadFile("govirt.crt")
 	if err != nil {
 		panic(err)
     }
@@ -204,15 +204,15 @@ func TestSetimage(t *testing.T) {
 	fmt.Println("testing set image")
 	var err error
 	c := Conn{}
-	c.Cb, err = ioutil.ReadFile("cert")
+	c.cb, err = ioutil.ReadFile("cert")
 	if err != nil {
 		panic(err)
 	}
-	c.Kb, err = ioutil.ReadFile("key")
+	c.kb, err = ioutil.ReadFile("key")
 	if err != nil {
 		panic(err)
 	}
-	c.Tb, err = ioutil.ReadFile("govirt.crt")
+	c.tb, err = ioutil.ReadFile("govirt.crt")
 	if err != nil {
 		panic(err)
 	}
@@ -229,15 +229,15 @@ func TestDefinevm(t *testing.T) {
 	fmt.Println("testing create vm")
 	var err error
 	c := Conn{}
-	c.Cb, err = ioutil.ReadFile("cert")
+	c.cb, err = ioutil.ReadFile("cert")
 	if err != nil {
 		panic(err)
 	}
-	c.Kb, err = ioutil.ReadFile("key")
+	c.kb, err = ioutil.ReadFile("key")
 	if err != nil {
 		panic(err)
 	}
-	c.Tb, err = ioutil.ReadFile("govirt.crt")
+	c.tb, err = ioutil.ReadFile("govirt.crt")
 	if err != nil {
 		panic(err)
 	}
@@ -275,15 +275,15 @@ func TestDefinevm(t *testing.T) {
 func TestMigrate(t *testing.T) {
 	var err error
 	c := Conn{}
-	c.Cb, err = ioutil.ReadFile("cert")
+	c.cb, err = ioutil.ReadFile("cert")
 	if err != nil {
 		panic(err)
 	}
-	c.Kb, err = ioutil.ReadFile("key")
+	c.kb, err = ioutil.ReadFile("key")
 	if err != nil {
 		panic(err)
 	}
-	c.Tb, err = ioutil.ReadFile("govirt.crt")
+	c.tb, err = ioutil.ReadFile("govirt.crt")
 	if err != nil {
 		panic(err)
 	}
@@ -296,15 +296,15 @@ func TestMigrate(t *testing.T) {
 func TestGetvm(t *testing.T) {
 	var err error
 	c := Conn{}
-	c.Cb, err = ioutil.ReadFile("cert")
+	c.cb, err = ioutil.ReadFile("cert")
 	if err != nil {
 		panic(err)
 	}
-	c.Kb, err = ioutil.ReadFile("key")
+	c.kb, err = ioutil.ReadFile("key")
 	if err != nil {
 		panic(err)
 	}
-	c.Tb, err = ioutil.ReadFile("govirt.crt")
+	c.tb, err = ioutil.ReadFile("govirt.crt")
 	if err != nil {
 		panic(err)
 	}
@@ -329,15 +329,15 @@ func TestStatevm(t *testing.T) {
 	fmt.Println("testing start vm with https")
 	var err error
 	c := Conn{}
-	c.Cb, err = ioutil.ReadFile("cert")
+	c.cb, err = ioutil.ReadFile("cert")
 	if err != nil {
 		panic(err)
 	}
-	c.Kb, err = ioutil.ReadFile("key")
+	c.kb, err = ioutil.ReadFile("key")
 	if err != nil {
 		panic(err)
 	}
-	c.Tb, err = ioutil.ReadFile("govirt.crt")
+	c.tb, err = ioutil.ReadFile("govirt.crt")
 	if err != nil {
 		panic(err)
 	}
@@ -350,15 +350,15 @@ func TestEditNet(t *testing.T) {
 	fmt.Println("testing patch network")
 	var err error
 	c := Conn{}
-	c.Cb, err = ioutil.ReadFile("cert")
+	c.cb, err = ioutil.ReadFile("cert")
 	if err != nil {
 		panic(err)
 	}
-	c.Kb, err = ioutil.ReadFile("key")
+	c.kb, err = ioutil.ReadFile("key")
 	if err != nil {
 		panic(err)
 	}
-	c.Tb, err = ioutil.ReadFile("govirt.crt")
+	c.tb, err = ioutil.ReadFile("govirt.crt")
 	if err != nil {
 		panic(err)
 	}

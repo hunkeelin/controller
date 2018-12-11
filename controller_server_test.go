@@ -28,7 +28,12 @@ func TestServer(t *testing.T) {
         Dport: "2018",
         Route: "cacerts/" + "govirt"+ ".crt",
     }
-    c.Tb, err = klinutils.Wget(r)
+    c.tb, err = klinutils.Wget(r)
+    if err != nil {
+        panic(err)
+    }
+    r.Route = "cacerts/superauth.crt"
+    c.authtb, err = klinutils.Wget(r)
     if err != nil {
         panic(err)
     }
@@ -42,7 +47,12 @@ func TestServer(t *testing.T) {
         },
         SignCA: "govirtcon",
     }
-    c.Cb, c.Kb, err = client.Getkeycrtbyte(w)
+    c.cb, c.kb, err = client.Getkeycrtbyte(w)
+    if err != nil {
+        panic(err)
+    }
+    w.SignCA  = "superauth"
+    c.authcb, c.authkb, err = client.Getkeycrtbyte(w)
     if err != nil {
         panic(err)
     }
@@ -73,11 +83,11 @@ func TestServer(t *testing.T) {
     }
     insecure := false
     if !insecure {
-        j.CertBytes = c.Cb
-        j.KeyBytes = c.Kb
+        j.CertBytes = c.cb
+        j.KeyBytes = c.kb
         j.Https = true
         j.Verify = false
-        j.TrustBytes = c.Tb
+        j.TrustBytes = c.tb
     }
     err = klinserver.Server(j)
     if err != nil {
