@@ -4,6 +4,12 @@ import (
 	"sync"
 	"time"
 )
+type ClusterInfo struct {
+    ClusterName string
+    Godhcp      string
+    Govirt      []string
+    Storage     string
+}
 type Conn struct {
 	Cb     []byte
 	Kb     []byte
@@ -14,6 +20,7 @@ type Conn struct {
 	authtb []byte
 	Ixml   map[string][]byte
 	rmap   map[string]rlimit
+    Clusters map[string]ClusterInfo
 }
 type rlimit struct {
 	cpu       int       // vcpu

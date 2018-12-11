@@ -6,13 +6,6 @@ import (
 	"io/ioutil"
 )
 
-type ClusterInfo struct {
-	ClusterName string
-	Godhcp      string
-	Govirt      []string
-	Storage     string
-}
-
 func Parse(f string) (map[string]ClusterInfo, error) {
 	m := make(map[string]ClusterInfo)
 	b, err := ioutil.ReadFile(f)
