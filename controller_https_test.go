@@ -85,7 +85,7 @@ func TestDelHost(t *testing.T) {
 		panic(err)
 	}
     // shutdown host
-    todelete := "ctest1"
+    todelete := "cent1"
     p, err := c.getvms(m["sf_deploy"].Govirt)
     if err != nil {
         panic(err)

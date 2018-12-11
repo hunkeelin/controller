@@ -13,6 +13,7 @@ import (
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 func (c *Conn) MainHandler(w http.ResponseWriter, r *http.Request) {
+    var err error
     d,err := base64.StdEncoding.DecodeString(r.Header.Get("api-key"))
     if err != nil {
         fmt.Println("Unable to decode given api-key is it base64 encoded?")
@@ -34,21 +35,26 @@ func (c *Conn) MainHandler(w http.ResponseWriter, r *http.Request) {
         w.Write([]byte("user not authorized"))
         return
     }
+    resource := c.userlimit[userpw[0]]
+    if !resource.active {
+        resource.vcpu = 8
+        resource.vram = 16
+        resource.active = true
+    }
+    c.userlimit[userpw[0]] = resource
 	switch r.Method {
 	case "GET":
-		err := c.get(w, r)
+		err = c.get(w, r)
 		if err != nil {
 			fmt.Println(err)
 			w.WriteHeader(500)
-			w.Write([]byte(err.Error()))
 		}
-//	case "POST":
-//		err := c.post(w, r)
-//		if err != nil {
-//			fmt.Println(err)
-//			w.WriteHeader(500)
-//			w.Write([]byte(err.Error()))
-//		}
+	case "POST":
+		err = c.post(w, r)
+		if err != nil {
+			fmt.Println(err)
+			w.WriteHeader(500)
+		}
 //	case "DELETE":
 //		err := c.del(w, r)
 //		if err != nil {
@@ -60,6 +66,9 @@ func (c *Conn) MainHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("invalid method")
 		w.WriteHeader(500)
 	}
+    if err != nil {
+        w.Write([]byte(err.Error()))
+    }
     return
 }
 

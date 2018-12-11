@@ -61,6 +61,8 @@ func TestServer(t *testing.T) {
         panic(err)
     }
     c.Clusters = m
+    rlim := make(map[string]resourcelimit)
+    c.userlimit = rlim
     con := http.NewServeMux()
     con.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
         c.MainHandler(w, r)
@@ -76,6 +78,7 @@ func TestServer(t *testing.T) {
     ixml := make(map[string][]byte)
     ixml["ubuntu"] = utemp
     ixml["centos"] = ctemp
+    c.Ixml = ixml
     j := &klinserver.ServerConfig {
         BindPort: klinutils.Stringtoport("controller"),
         ServeMux: con,
