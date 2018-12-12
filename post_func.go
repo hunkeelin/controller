@@ -2,14 +2,14 @@ package controller
 
 import (
 	"bytes"
+	"encoding/base64"
 	"errors"
-    "encoding/base64"
-    "strings"
 	"github.com/hunkeelin/govirt/govirtlib"
 	"github.com/hunkeelin/klinutils"
 	"math/rand"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -53,18 +53,18 @@ func checkVmForm(v govirtlib.CreateVmForm) error {
 	}
 	return nil
 }
-func (c *Conn) createvm(w http.ResponseWriter,r *http.Request,v govirtlib.PostPayload) error {
-    d,_ := base64.StdEncoding.DecodeString(r.Header.Get("api-key"))
-    userpw := strings.Split(string(d),":")
-    resource := c.userlimit[userpw[0]]
-    if resource.vcpu <  v.VmForm.CpuCount {
-        rcp := strconv.Itoa(resource.vcpu)
-        return errors.New(userpw[0]+" Exceed cpu quota you have "+rcp)
-    }
-    if resource.vram <  v.VmForm.MemoryCount {
-        rrm := strconv.Itoa(resource.vram)
-        return errors.New(userpw[0]+" Exceed mem quota you have "+rrm)
-    }
+func (c *Conn) createvm(w http.ResponseWriter, r *http.Request, v govirtlib.PostPayload) error {
+	d, _ := base64.StdEncoding.DecodeString(r.Header.Get("api-key"))
+	userpw := strings.Split(string(d), ":")
+	resource := c.userlimit[userpw[0]]
+	if resource.vcpu < v.VmForm.CpuCount {
+		rcp := strconv.Itoa(resource.vcpu)
+		return errors.New(userpw[0] + " Exceed cpu quota you have " + rcp)
+	}
+	if resource.vram < v.VmForm.MemoryCount {
+		rrm := strconv.Itoa(resource.vram)
+		return errors.New(userpw[0] + " Exceed mem quota you have " + rrm)
+	}
 	err := checkVmForm(v.VmForm)
 	if err != nil {
 		return err
@@ -74,15 +74,19 @@ func (c *Conn) createvm(w http.ResponseWriter,r *http.Request,v govirtlib.PostPa
 	}
 	err = c.edithost(c.Clusters[v.Cluster].Godhcp, v, false)
 	if err != nil {
-		panic(err)
+		return err
 	}
 	err = c.setimage(c.Clusters[v.Cluster].Storage, v.VmForm.Image, v.VmForm.Hostname)
 	if err != nil {
-		panic(err)
+		return err
+	}
+	uuid, err := klinutils.Genuuidv2(userpw[0])
+	if err != nil {
+		return err
 	}
 	xml := c.Ixml[v.VmForm.Image]
 	xml = bytes.Replace(xml, []byte("name_replace"), []byte(v.VmForm.Hostname), -1)
-	xml = bytes.Replace(xml, []byte("uuid_replace"), []byte(v.VmForm.Uuid), -1)
+	xml = bytes.Replace(xml, []byte("uuid_replace"), uuid, -1)
 	xml = bytes.Replace(xml, []byte("memory_replace"), []byte(strconv.Itoa(v.VmForm.MemoryCount)), -1)
 	xml = bytes.Replace(xml, []byte("cpu_replace"), []byte(strconv.Itoa(v.VmForm.CpuCount)), -1)
 	xml = bytes.Replace(xml, []byte("imagedir_replace"), []byte("/data/govirt/storage"), -1)
@@ -98,9 +102,9 @@ func (c *Conn) createvm(w http.ResponseWriter,r *http.Request,v govirtlib.PostPa
 	if err != nil {
 		panic(err)
 	}
-    resource.vcpu = resource.vcpu - v.VmForm.CpuCount
-    resource.vram = resource.vram - v.VmForm.MemoryCount
-    c.userlimit[userpw[0]] = resource
+	resource.vcpu = resource.vcpu - v.VmForm.CpuCount
+	resource.vram = resource.vram - v.VmForm.MemoryCount
+	c.userlimit[userpw[0]] = resource
 	return nil
 }
 func (c *Conn) CreateNewVm(v govirtlib.PostPayload) error {
