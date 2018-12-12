@@ -80,7 +80,7 @@ func (c *Conn) createvm(w http.ResponseWriter, r *http.Request, v govirtlib.Post
 	if err != nil {
 		return err
 	}
-	uuid, err := klinutils.Genuuidv2(userpw[0])
+	uuid, err := klinutils.Genuuidv2(userpw[0], v.VmForm.CpuCount, v.VmForm.MemoryCount)
 	if err != nil {
 		return err
 	}
