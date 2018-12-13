@@ -85,7 +85,7 @@ func TestDelHost(t *testing.T) {
 		panic(err)
 	}
     // shutdown host
-    todelete := "cent1"
+    todelete := "ctest2"
     p, err := c.getvms(m["sf_deploy"].Govirt)
     if err != nil {
         panic(err)
@@ -94,12 +94,12 @@ func TestDelHost(t *testing.T) {
         for _,i := range hosts {
             if i.Domain.Name == todelete {
                 if i.State == "running" {
-                    err = c.Statevm("destroy",todelete,parent)
+                    err = c.statevm("destroy",todelete,parent)
                     if err != nil {
                         panic(err)
                     }
                 }
-                err = c.Statevm("undefine",todelete,parent)
+                err = c.statevm("undefine",todelete,parent)
                 if err != nil {
                     panic(err)
                 }
@@ -325,7 +325,7 @@ func TestGetvm(t *testing.T) {
     }
 
 }
-func TestStatevm(t *testing.T) {
+func Teststatevm(t *testing.T) {
 	fmt.Println("testing start vm with https")
 	var err error
 	c := Conn{}
@@ -341,7 +341,7 @@ func TestStatevm(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	err = c.Statevm("start", "cent1", "sf01-lab-2.squaretrade.com")
+	err = c.statevm("start", "cent1", "sf01-lab-2.squaretrade.com")
 	if err != nil {
 		panic(err)
 	}

@@ -9,7 +9,7 @@ import (
 	"io/ioutil"
 )
 
-func (c *Conn) Statevm(state, vm, host string) error {
+func (c *Conn) statevm(state, vm, host string) error {
 	p := &govirtlib.PostPayload{
 		Action: state,
 		Domain: vm,

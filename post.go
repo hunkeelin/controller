@@ -27,7 +27,11 @@ func (c *Conn) post(w http.ResponseWriter, r *http.Request) error {
     }
 	switch strings.ToLower(p.Action) {
 	case "createvm":
+        c.postMu.Lock()
 		err = c.createvm(w,r,p)
+        c.postMu.Unlock()
+	case "state":
+		err = c.statevmapi(w,r,p)
 	default:
 		return errors.New("Invalid Action")
 	}

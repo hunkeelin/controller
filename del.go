@@ -24,7 +24,7 @@ func (c *Conn) del(w http.ResponseWriter, r *http.Request) error {
 	case "vm":
 		err = c.delvm(w,r,p)
 	default:
-		return errors.New("Invalid Storage get Action " + strings.ToLower(p.Target))
+		return errors.New("Invalid Storage del Target " + strings.ToLower(p.Target))
 	}
 	return err
 }

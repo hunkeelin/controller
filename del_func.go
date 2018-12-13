@@ -43,12 +43,12 @@ func (c *Conn) delvm(w http.ResponseWriter, r *http.Request, v govirtlib.PostPay
                         return err
                     }
                     if i.State == "running" {
-                        err = c.Statevm("destroy",todelete,parent)
+                        err = c.statevm("destroy",todelete,parent)
                         if err != nil {
                             return err
                         }
                     }
-                    err = c.Statevm("undefine",todelete,parent)
+                    err = c.statevm("undefine",todelete,parent)
                     if err != nil {
                         return err
                     }

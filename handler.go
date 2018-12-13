@@ -88,12 +88,13 @@ func (c *Conn) checkldap(user, pw string, v []string) (string, int) {
 		Route:       "ldap",
 		Payload:     p,
 		HttpVersion: 2,
-		TimeOut:     3500,
+		TimeOut:     2500,
 		CertBytes:   c.authcb,
 		KeyBytes:    c.authkb,
 		TrustBytes:  c.authtb,
 	}
 	resp, err := klinreq.SendPayload(i)
+	defer resp.Body.Close()
 	if err != nil {
 		fmt.Println(err)
 		return "Server Error", 500
@@ -103,6 +104,5 @@ func (c *Conn) checkldap(user, pw string, v []string) (string, int) {
 		fmt.Println("Unable to read response body from ldapapi")
 		return "Server Error", 500
 	}
-	resp.Body.Close()
 	return string(body), resp.StatusCode
 }

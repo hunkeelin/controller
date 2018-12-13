@@ -1,6 +1,7 @@
 package controller
 
 import (
+    "fmt"
 	"bytes"
     "encoding/hex"
     "crypto/sha256"
@@ -24,7 +25,7 @@ func (c *Conn) Migratehost(ori, dest, vm string) error {
 	if err != nil {
 		return err
 	}
-	err = c.Statevm("unDefine", vm, ori)
+	err = c.statevm("unDefine", vm, ori)
 	if err != nil {
 		return err
 	}
@@ -76,11 +77,11 @@ func (c *Conn) createvm(w http.ResponseWriter, r *http.Request, v govirtlib.Post
 	if c.Ixml[v.VmForm.Image] == nil {
 		return errors.New("No image for : " + v.VmForm.Image)
 	}
-	err = c.edithost(c.Clusters[v.Cluster].Godhcp, v, false)
+	err = c.setimage(c.Clusters[v.Cluster].Storage, v.VmForm.Image, v.VmForm.Hostname)
 	if err != nil {
 		return err
 	}
-	err = c.setimage(c.Clusters[v.Cluster].Storage, v.VmForm.Image, v.VmForm.Hostname)
+	err = c.edithost(c.Clusters[v.Cluster].Godhcp, v, false)
 	if err != nil {
 		return err
 	}
@@ -102,7 +103,7 @@ func (c *Conn) createvm(w http.ResponseWriter, r *http.Request, v govirtlib.Post
 	if err != nil {
 		panic(err)
 	}
-	err = c.Statevm("start", v.VmForm.Hostname, c.Clusters[v.Cluster].Govirt[randhostint])
+	err = c.statevm("start", v.VmForm.Hostname, c.Clusters[v.Cluster].Govirt[randhostint])
 	if err != nil {
 		panic(err)
 	}
@@ -145,9 +146,43 @@ func (c *Conn) CreateNewVm(v govirtlib.PostPayload) error {
 	if err != nil {
 		panic(err)
 	}
-	err = c.Statevm("start", v.VmForm.Hostname, m[v.Cluster].Govirt[randhostint])
+	err = c.statevm("start", v.VmForm.Hostname, m[v.Cluster].Govirt[randhostint])
 	if err != nil {
 		panic(err)
 	}
 	return nil
+}
+
+func (c *Conn) statevmapi(w http.ResponseWriter, r *http.Request, v govirtlib.PostPayload) error {
+    allowops := []string{"shutdown","start","destroy"}
+    if !klinutils.StringInSlice(v.Target,allowops){
+        return errors.New("Please specify correct target operations shutdown/start/destory")
+    }
+    d, _ := base64.StdEncoding.DecodeString(r.Header.Get("api-key"))
+    userpw := strings.Split(string(d), ":")
+    usersum := sha256.Sum256([]byte(userpw[0]))
+    userhash := hex.EncodeToString(usersum[:])
+    tostate := v.Domain
+    for _,vhosts := range c.Clusters {
+        p, err := c.getvms(vhosts.Govirt)
+        if err != nil {
+            return err
+        }
+        for parent, hosts := range p.Listvms {
+            for _,i := range hosts {
+                if i.Domain.Name == tostate {
+                    vmhash := hex.EncodeToString(i.Domain.UUID[:])
+                    if vmhash[0:8] != userhash[0:8] {
+                        fmt.Println("The vm",i.Domain.Name,"doesn't belong to",userpw[0])
+                        return errors.New("Unable to "+v.Target+" "+i.Domain.Name)
+                    }
+                    err = c.statevm(v.Target,tostate,parent)
+                    if err != nil {
+                        return err
+                    }
+                }
+            }
+        }
+    }
+    return nil
 }
