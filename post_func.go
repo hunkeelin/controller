@@ -2,6 +2,8 @@ package controller
 
 import (
 	"bytes"
+    "encoding/hex"
+    "crypto/sha256"
 	"encoding/base64"
 	"errors"
 	"github.com/hunkeelin/govirt/govirtlib"
@@ -56,7 +58,9 @@ func checkVmForm(v govirtlib.CreateVmForm) error {
 func (c *Conn) createvm(w http.ResponseWriter, r *http.Request, v govirtlib.PostPayload) error {
 	d, _ := base64.StdEncoding.DecodeString(r.Header.Get("api-key"))
 	userpw := strings.Split(string(d), ":")
-	resource := c.userlimit[userpw[0]]
+    usersum := sha256.Sum256([]byte(userpw[0]))
+    userhash := hex.EncodeToString(usersum[:])
+    resource := c.userlimit[userhash[0:8]]
 	if resource.vcpu < v.VmForm.CpuCount {
 		rcp := strconv.Itoa(resource.vcpu)
 		return errors.New(userpw[0] + " Exceed cpu quota you have " + rcp)
@@ -104,7 +108,7 @@ func (c *Conn) createvm(w http.ResponseWriter, r *http.Request, v govirtlib.Post
 	}
 	resource.vcpu = resource.vcpu - v.VmForm.CpuCount
 	resource.vram = resource.vram - v.VmForm.MemoryCount
-	c.userlimit[userpw[0]] = resource
+	c.userlimit[userhash[0:8]] = resource
 	return nil
 }
 func (c *Conn) CreateNewVm(v govirtlib.PostPayload) error {

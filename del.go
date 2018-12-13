@@ -9,8 +9,8 @@ import (
 	"strings"
 )
 
-func (c *Conn) get(w http.ResponseWriter, r *http.Request) error {
-	var p govirtlib.GetPayload
+func (c *Conn) del(w http.ResponseWriter, r *http.Request) error {
+	var p govirtlib.PostPayload
     var err error
 	b, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -21,10 +21,8 @@ func (c *Conn) get(w http.ResponseWriter, r *http.Request) error {
         return errors.New("Cluster "+p.Cluster+" doens't exist\n")
     }
 	switch strings.ToLower(p.Target) {
-	case "vms":
-		err = c.getvmsapi(w,r,c.Clusters[p.Cluster].Govirt)
-	case "network":
-		err = c.getnetapi(w, c.Clusters[p.Cluster].Godhcp)
+	case "vm":
+		err = c.delvm(w,r,p)
 	default:
 		return errors.New("Invalid Storage get Action " + strings.ToLower(p.Target))
 	}

@@ -34,7 +34,7 @@ type resourcelimit struct {
 	vcpu    int
 	vram    int
 	active  bool
-	listvms []string
+    user    string
 }
 type rlimit struct {
 	cpu       int       // vcpu

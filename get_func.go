@@ -3,7 +3,11 @@ package controller
 import (
 	"errors"
     "net/http"
+    "strings"
 	"fmt"
+    "encoding/hex"
+    "encoding/base64"
+    "crypto/sha256"
 	"github.com/hunkeelin/govirt/govirtlib"
 	"github.com/hunkeelin/klinutils"
 	"github.com/hunkeelin/mtls/klinreq"
@@ -122,9 +126,13 @@ func (c *Conn) getnetapi(w http.ResponseWriter, nethost string) error {
     }
     return nil
 }
-func (c *Conn) getvmsapi(w http.ResponseWriter, hosts []string) error {
+func (c *Conn) getvmsapi(w http.ResponseWriter,r *http.Request,hosts []string) error {
 	var rp govirtlib.ReturnPayload
-    listvms := make(map[string][]govirtlib.DomainInfo)
+    d, _ := base64.StdEncoding.DecodeString(r.Header.Get("api-key"))
+    userpw := strings.Split(string(d), ":")
+    usersum := sha256.Sum256([]byte(userpw[0]))
+    userhash := hex.EncodeToString(usersum[:])
+    var udomainlist []govirtlib.DomainInfo
 	p := &govirtlib.GetPayload{
 		Target: "vm",
 	}
@@ -156,9 +164,14 @@ func (c *Conn) getvmsapi(w http.ResponseWriter, hosts []string) error {
 		if err != nil {
 			return err
 		}
-        listvms[host] = tmpr.Domains
+        for _,val := range tmpr.Domains{
+            vmhash := hex.EncodeToString(val.Domain.UUID[:])
+            if vmhash[0:8] == userhash[0:8] {
+                udomainlist = append(udomainlist,val)
+            }
+        }
 	}
-    rp.Listvms = listvms
+    rp.Domains = udomainlist
     err := json.NewEncoder(w).Encode(rp)
     if err != nil {
         fmt.Println("unable to encode json")

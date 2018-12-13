@@ -3,6 +3,8 @@ package controller
 import (
 	"encoding/base64"
 	"fmt"
+    "crypto/sha256"
+    "encoding/hex"
 	"github.com/hunkeelin/mtls/klinreq"
 	"github.com/json-iterator/go"
 	"io/ioutil"
@@ -35,13 +37,16 @@ func (c *Conn) MainHandler(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("user not authorized"))
 		return
 	}
-	resource := c.userlimit[userpw[0]]
+    usersum := sha256.Sum256([]byte(userpw[0]))
+    userhash := hex.EncodeToString(usersum[:])
+	resource := c.userlimit[userhash[0:8]]
 	if !resource.active {
+        resource.user = userpw[0]
 		resource.vcpu += 8
 		resource.vram += 16
 		resource.active = true
 	}
-	c.userlimit[userpw[0]] = resource
+	c.userlimit[userhash[0:8]] = resource
 	switch r.Method {
 	case "GET":
 		err = c.get(w, r)
@@ -55,13 +60,12 @@ func (c *Conn) MainHandler(w http.ResponseWriter, r *http.Request) {
 			fmt.Println(err)
 			w.WriteHeader(500)
 		}
-		//	case "DELETE":
-		//		err := c.del(w, r)
-		//		if err != nil {
-		//			fmt.Println(err)
-		//			w.WriteHeader(500)
-		//			w.Write([]byte(err.Error()))
-		//		}
+	case "DELETE":
+		err = c.del(w, r)
+		if err != nil {
+			fmt.Println(err)
+			w.WriteHeader(500)
+		}
 	default:
 		fmt.Println("invalid method")
 		w.WriteHeader(500)

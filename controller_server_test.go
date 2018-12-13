@@ -2,8 +2,10 @@ package controller
 
 import (
 	"fmt"
+    "encoding/hex"
 	"github.com/hunkeelin/SuperCAclient/lib"
 	"github.com/hunkeelin/klinutils"
+    "strconv"
 	"github.com/hunkeelin/mtls/klinserver"
 	"github.com/hunkeelin/pki"
 	"io/ioutil"
@@ -62,22 +64,31 @@ func TestServer(t *testing.T) {
 	}
 	c.Clusters = m
 	rlim := make(map[string]resourcelimit)
-	/*
-		for _, vhost := range m {
-			pp, err := c.getvms(vhost.Govirt)
-			if err != nil {
-				panic(err)
-			}
-			for parent, hosts := range pp.Listvms {
-				for _, i := range hosts {
-					userhash := hex.EncodeToString(i.Domain.UUID[:])
-					tmp := rlim[userhash]
-					tmp.listvms = append(tmp.listvms, i.Domain.Name)
-					rlim[userhash] = tmp
-				}
-			}
-		}
-	*/
+    for _, vhost := range m {
+        pp, err := c.getvms(vhost.Govirt)
+        if err != nil {
+            panic(err)
+        }
+        for _, hosts := range pp.Listvms {
+            for _, i := range hosts {
+                userhash := hex.EncodeToString(i.Domain.UUID[:])
+                tmp,_ := rlim[userhash[0:8]]
+                ocpu, err := strconv.Atoi(userhash[8:10])
+                if err != nil {
+                    fmt.Println("this host does not belong to a user",i.Domain.Name)
+                    continue
+                }
+                oram, err := strconv.Atoi(userhash[10:12])
+                if err != nil {
+                    fmt.Println("this host does not belong to a user",i.Domain.Name)
+                    continue
+                }
+                tmp.vcpu = tmp.vcpu - ocpu
+                tmp.vram = tmp.vram - oram
+                rlim[userhash[0:8]] = tmp
+            }
+        }
+    }
 	c.userlimit = rlim
 	con := http.NewServeMux()
 	con.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
