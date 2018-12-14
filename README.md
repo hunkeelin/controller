@@ -67,7 +67,7 @@ Require fields:
 ## DELETE 
 ```
 type PostPayload struct {
-    Domain        string         `json:"action"
+    Domain        string         `json:"domain"
     Target        string         `json:"target"`
 }
 ```
