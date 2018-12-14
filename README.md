@@ -43,7 +43,8 @@ type PostPayload struct {
 
 ### Action = createvm ###
 This action for create VM. You will have to include an additional payload `VmForm` shown below. 
-require frields: 
+
+Require frields: 
     - Cluster: Specify the govirt cluster. E.g `sf_deploy`
     - VmForm:
 ```
@@ -57,6 +58,7 @@ type CreateVmForm struct {
 ```
 ### Action = state ###
 Manupulate the state of the vm.
+
 Require fields: 
     - Cluster: Specify the govirt cluster. E.g `sf_deploy`
     - Target: The desire state of the virtual machine. start/destroy/shutdown
@@ -71,6 +73,7 @@ type PostPayload struct {
 ```
 ### Target = vm ###
 To remove the virtual machine from the cluster 
+
 Require fields: 
      - Domain: The name of the virutal machine you want to delete. 
 
