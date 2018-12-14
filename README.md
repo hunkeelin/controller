@@ -77,5 +77,5 @@ To remove the virtual machine from the cluster
 Require fields: 
  - Domain: The name of the virutal machine you want to delete. 
 
-##CLI
+## CLI
 For cli please read `_test.go`
